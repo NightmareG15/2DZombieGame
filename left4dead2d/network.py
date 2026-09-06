@@ -50,9 +50,9 @@ class NetworkManager:
                         "socket": conn,
                         "addr": addr,
                         "data": {},
-                        "name": f"Jogador {client_id + 1}",
+                        "name": f"User {client_id + 1}",
                     }
-                print(f"[HOST] Jogador conectado: {addr} (ID: {client_id})")
+                print(f"[HOST] User connected: {addr} (ID: {client_id})")
                 threading.Thread(
                     target=self._handle_client, args=(client_id,), daemon=True
                 ).start()
@@ -60,7 +60,7 @@ class NetworkManager:
                 continue
             except Exception as e:
                 if self.running:
-                    print(f"[HOST] Erro ao aceitar conexao: {e}")
+                    print(f"[HOST] Failed to accept connection: {e}")
 
     def _handle_client(self, client_id):
         while self.running and client_id in self.clients:
@@ -93,7 +93,7 @@ class NetworkManager:
                 except:
                     pass
                 del self.clients[client_id]
-        print(f"[HOST] Jogador {client_id} desconectado")
+        print(f"[HOST] User {client_id} disconnected")
 
     def _host_broadcast_loop(self):
         while self.running:
@@ -122,7 +122,7 @@ class NetworkManager:
                 state["players"][cid] = client["data"]
         return state
 
-    def connect_to_host(self, host_ip, port=5555, player_name="Jogador"):
+    def connect_to_host(self, host_ip, port=5555, player_name="Player"):
         self.is_host = False
         self.is_client = True
         self.running = True
@@ -138,9 +138,9 @@ class NetworkManager:
             self.recv_thread.start()
             self.send_thread = threading.Thread(target=self._client_send_loop, daemon=True)
             self.send_thread.start()
-            return True, "Conectado ao host!"
+            return True, "Connected to host."
         except Exception as e:
-            return False, f"Erro ao conectar: {e}"
+            return False, f"Failed to connect: {e}"
 
     def _client_recv_loop(self):
         buffer = ""

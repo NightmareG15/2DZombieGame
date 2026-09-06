@@ -176,7 +176,7 @@ class Game:
             "total": self.total_waves,
             "remaining": size,
         }
-        self.hud.add_message("A HORDA VEM!", COLORS["red"], 90)
+        self.hud.add_message("IMMINENT HORDE!", COLORS["red"], 90)
 
     def spawn_special_enemy(self, enemy_type=None):
         player = self.players[self.current_player_idx]
@@ -209,7 +209,7 @@ class Game:
                     return
                 if self.current_wave <= self.chapter_data["safe_room_waves"]:
                     self.hud.add_message(
-                        f"Onda {self.current_wave}/{self.total_waves} de zumbis",
+                        f"Wave {self.current_wave}/{self.total_waves} of Zombies",
                         COLORS["yellow"],
                     )
                     for _ in range(5 + self.current_wave * 3):
@@ -240,7 +240,7 @@ class Game:
                 self.between_waves = True
                 self.wave_delay_timer = self.wave_delay
                 self.hud.add_message(
-                    f"Onda {self.current_wave} concluida!", COLORS["green"], 60
+                    f"Wave {self.current_wave} finished.", COLORS["green"], 60
                 )
                 if self.current_wave > self.chapter_data["safe_room_waves"]:
                     self.safe_room_reached = True
@@ -603,15 +603,15 @@ class Game:
             available = min(needed, player.reserve_ammo.get(wpn, 0))
             player.ammo[wpn] += available
             player.reserve_ammo[wpn] -= available
-            self.hud.add_message("Recarregando...", COLORS["yellow"], 30)
+            self.hud.add_message("Reloading...", COLORS["yellow"], 30)
 
     def _use_medkit(self):
         player = self.players[0]
         if player.use_medkit():
-            self.hud.add_message("Medkit usado! +40 HP", COLORS["green"], 45)
+            self.hud.add_message("Medkit used. +40 HP", COLORS["green"], 45)
             self.spawn_particles(player.x, player.y, COLORS["green"], 8)
         elif player.medkits == 0:
-            self.hud.add_message("Sem medkits!", COLORS["red"], 30)
+            self.hud.add_message("You have no medkits.", COLORS["red"], 30)
 
     def _interact(self, now):
         player = self.players[0]
@@ -621,7 +621,7 @@ class Game:
                 dy = player.y - item.y
                 if math.sqrt(dx * dx + dy * dy) < 50:
                     item.apply(player)
-                    self.hud.add_message(f"Pegou: {ITEM_DATA[item.type]['name']}", COLORS["green"], 30)
+                    self.hud.add_message(f"Picked up: {ITEM_DATA[item.type]['name']}", COLORS["green"], 30)
                     break
 
         for p in self.players:
@@ -631,7 +631,7 @@ class Game:
                 if math.sqrt(dx * dx + dy * dy) < 50:
                     p.alive = True
                     p.hp = 30
-                    self.hud.add_message(f"{p.name} resgatado!", COLORS["cyan"], 60)
+                    self.hud.add_message(f"{p.name} rescued!", COLORS["cyan"], 60)
                     break
 
     def _handle_pause_event(self, event, now):
@@ -697,7 +697,7 @@ class Game:
         self.screen.fill(COLORS["black"])
 
         if self.state == "menu":
-            self.menu.draw_main_menu(self.screen, now, self.joystick.get_name() if self.has_controller and self.joystick else "Nenhum")
+            self.menu.draw_main_menu(self.screen, now, self.joystick.get_name() if self.has_controller and self.joystick else "None")
         elif self.state == "character_select":
             self.menu.draw_character_select(self.screen)
         elif self.state == "chapter_intro":

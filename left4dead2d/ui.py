@@ -127,14 +127,14 @@ class HUD:
         panel.fill((0, 0, 0, 150))
         surface.blit(panel, (x, y))
 
-        title = self.font_small.render("EQUIPE", True, COLORS["white"])
+        title = self.font_small.render("Team", True, COLORS["white"])
         surface.blit(title, (x + 5, y + 5))
         y += 25
 
         for i, p in enumerate(players):
             color = COLORS["white"] if p.alive else COLORS["dark_gray"]
             marker = ">> " if i == current_idx else "   "
-            status = "MORTO" if not p.alive else f"HP:{int(p.hp)}"
+            status = "Dead" if not p.alive else f"HP:{int(p.hp)}"
             txt = self.font_small.render(f"{marker}{p.name}: {status}", True, color)
             surface.blit(txt, (x + 5, y))
             y += 22
@@ -213,14 +213,14 @@ class HUD:
     def _draw_wave_info(self, surface, wave_info):
         if not wave_info.get("active"):
             return
-        txt = self.font_large.render(f"HORDA! Onda {wave_info['current']}/{wave_info['total']}", True, COLORS["red"])
+        txt = self.font_large.render(f"Horde. Wave {wave_info['current']}/{wave_info['total']}", True, COLORS["red"])
         pulse = abs(math.sin(time.time() * 4)) * 0.3 + 0.7
         c = tuple(int(ch * pulse) for ch in COLORS["red"])
-        txt = self.font_large.render(f"HORDA! Onda {wave_info['current']}/{wave_info['total']}", True, c)
+        txt = self.font_large.render(f"Horde. Wave {wave_info['current']}/{wave_info['total']}", True, c)
         surface.blit(txt, (SCREEN_WIDTH // 2 - txt.get_width() // 2, 50))
 
         remaining = wave_info.get("remaining", 0)
-        rem_txt = self.font_medium.render(f"Inimigos restantes: {remaining}", True, COLORS["white"])
+        rem_txt = self.font_medium.render(f"Remaining Zombies: {remaining}", True, COLORS["white"])
         surface.blit(rem_txt, (SCREEN_WIDTH // 2 - rem_txt.get_width() // 2, 90))
 
 
@@ -235,7 +235,7 @@ class MenuSystem:
         self.menu_state = "main"
         self.selected_option = 0
         self.scroll_offset = 0
-        self.controller_name = "Nenhum"
+        self.controller_name = "None"
 
     def init_fonts(self):
         self.font_large = pygame.font.SysFont("Arial", 48, bold=True)
@@ -243,7 +243,7 @@ class MenuSystem:
         self.font_small = pygame.font.SysFont("Arial", 18)
         self.font_tiny = pygame.font.SysFont("Arial", 14)
 
-    def draw_main_menu(self, surface, now, controller_name="Nenhum"):
+    def draw_main_menu(self, surface, now, controller_name="None"):
         if not self.font_large:
             self.init_fonts()
         self.controller_name = controller_name
@@ -262,23 +262,23 @@ class MenuSystem:
             pygame.draw.circle(surface, (80, 30, 30), (int(x), int(y)), s)
 
         title1 = self.font_large.render("LEFT 4", True, COLORS["red"])
-        title2 = self.font_large.render("DOIDO", True, COLORS["red"])
+        title2 = self.font_large.render("DEAD 2D", True, COLORS["red"])
         shadow1 = self.font_large.render("LEFT 4", True, COLORS["dark_gray"])
-        shadow2 = self.font_large.render("DOIDO", True, COLORS["dark_gray"])
+        shadow2 = self.font_large.render("DEAD 2D", True, COLORS["dark_gray"])
         surface.blit(shadow1, (SCREEN_WIDTH // 2 - title1.get_width() // 2 + 3, 83))
         surface.blit(shadow2, (SCREEN_WIDTH // 2 - title2.get_width() // 2 + 3, 138))
         surface.blit(title1, (SCREEN_WIDTH // 2 - title1.get_width() // 2, 80))
         surface.blit(title2, (SCREEN_WIDTH // 2 - title2.get_width() // 2, 135))
 
-        subtitle = self.font_small.render("Uma parodia 2D de Left 4 Dead 2", True, COLORS["light_gray"])
+        subtitle = self.font_small.render("An 2D Parody of Left 4 Dead", True, COLORS["light_gray"])
         surface.blit(subtitle, (SCREEN_WIDTH // 2 - subtitle.get_width() // 2, 190))
 
-        ctrl_hint = f"Controle: {controller_name}"
-        ctrl_color = COLORS["green"] if controller_name != "Nenhum" else COLORS["gray"]
+        ctrl_hint = f"Controller: {controller_name}"
+        ctrl_color = COLORS["green"] if controller_name != "None" else COLORS["gray"]
         ctrl_surf = self.font_tiny.render(ctrl_hint, True, ctrl_color)
         surface.blit(ctrl_surf, (SCREEN_WIDTH // 2 - ctrl_surf.get_width() // 2, 210))
 
-        options = ["Jogar", "Sair"]
+        options = ["Play", "Quit"]
         for i, opt in enumerate(options):
             y = 250 + i * 50
             color = COLORS["yellow"] if i == self.selected_option else COLORS["white"]
@@ -293,18 +293,18 @@ class MenuSystem:
         controls_y = SCREEN_HEIGHT - 140
         pygame.draw.rect(surface, (15, 15, 25), (20, controls_y, SCREEN_WIDTH - 40, 100))
         pygame.draw.rect(surface, COLORS["dark_gray"], (20, controls_y, SCREEN_WIDTH - 40, 100), 1)
-        ctrl_title = self.font_small.render("CONTROLES", True, COLORS["yellow"])
+        ctrl_title = self.font_small.render("CONTROLS", True, COLORS["yellow"])
         surface.blit(ctrl_title, (40, controls_y + 5))
 
         keys_left = [
-            "WASD: Mover | Mouse: Mirar | Click: Atirar",
-            "Q: Habilidade | R: Recarregar | F: Medkit | E: Interagir",
-            "Scroll/ClickDir: Trocar arma | ESC: Pausar",
+            "WASD: Move | Mouse: Aim | LeftClick: Shoot | R: Reload",
+            "Q: Special Ability | F: Medkit | E: Interact",
+            "Scroll/RightClick/1,2,3: Swap Weapon | ESC: Pause",
         ]
         keys_right = [
-            "Controle: JoyEsq=Mover | JoyDir=Mirar | RT=Atirar",
-            "Y=Habilidade | B=Recarregar | X=Medkit | A=Interagir",
-            "LB/RB: Trocar arma | Start: Pausar",
+            "Controle: LeftStick=Move | RightStick=Aim | RT/R1=Shoot",
+            "Y/Square=Special Ability | B/Circle=Reload | X/Triangle=Medkit "
+            "A/Cross=Interact | LB/RB: Swap Weapon | Start: Pause",
         ]
         for i, line in enumerate(keys_left):
             surf = self.font_tiny.render(line, True, COLORS["light_gray"])
@@ -313,10 +313,10 @@ class MenuSystem:
             surf = self.font_tiny.render(line, True, COLORS["light_gray"])
             surface.blit(surf, (SCREEN_WIDTH // 2 + 20, controls_y + 25 + i * 20))
 
-        hint = self.font_small.render("W/S para selecionar, ENTER para confirmar", True, COLORS["gray"])
+        hint = self.font_small.render("W/S to select, ENTER to confirm", True, COLORS["gray"])
         surface.blit(hint, (SCREEN_WIDTH // 2 - hint.get_width() // 2, SCREEN_HEIGHT - 25))
 
-        ver = self.font_small.render("v1.2 - Feito com Python/Pygame", True, COLORS["gray"])
+        ver = self.font_small.render("V0.0.1 - Built with Python", True, COLORS["gray"])
         surface.blit(ver, (SCREEN_WIDTH - 200, SCREEN_HEIGHT - 25))
 
     def draw_character_select(self, surface):
@@ -324,7 +324,7 @@ class MenuSystem:
             self.init_fonts()
         surface.fill((10, 10, 20))
 
-        title = self.font_large.render("ESCOLHA SEU PERSONAGEM", True, COLORS["white"])
+        title = self.font_large.render("Select Your Survivor", True, COLORS["white"])
         surface.blit(title, (SCREEN_WIDTH // 2 - title.get_width() // 2, 30))
 
         card_w = 250
@@ -373,11 +373,11 @@ class MenuSystem:
             pygame.draw.rect(surface, COLORS["dark_gray"], (x + 35, stats_y, hp_bar_w, 12))
             spd_fill = data["speed"] / 4.0
             pygame.draw.rect(surface, COLORS["cyan"], (x + 35, stats_y, int(hp_bar_w * spd_fill), 12))
-            spd_label = self.font_small.render(f"Velocidade: {data['speed']:.1f}", True, COLORS["white"])
+            spd_label = self.font_small.render(f"Speed: {data['speed']:.1f}", True, COLORS["white"])
             surface.blit(spd_label, (x + 35, stats_y - 15))
 
             stats_y += 30
-            ab_title = self.font_small.render("HABILIDADE:", True, COLORS["yellow"])
+            ab_title = self.font_small.render("Special Ability:", True, COLORS["yellow"])
             surface.blit(ab_title, (x + 35, stats_y))
 
             stats_y += 18
@@ -402,13 +402,13 @@ class MenuSystem:
 
             if selected:
                 pygame.draw.rect(surface, COLORS["yellow"], (x + 10, y + card_h - 35, card_w - 20, 25))
-                sel_txt = self.font_small.render("SELECIONADO", True, COLORS["black"])
+                sel_txt = self.font_small.render("Selected", True, COLORS["black"])
                 surface.blit(sel_txt, (x + card_w // 2 - sel_txt.get_width() // 2, y + card_h - 33))
 
-        hint = self.font_small.render("A/D ou setas para escolher, ENTER para confirmar", True, COLORS["gray"])
+        hint = self.font_small.render("A/D or Arrows to Select, ENTER to confirm", True, COLORS["gray"])
         surface.blit(hint, (SCREEN_WIDTH // 2 - hint.get_width() // 2, SCREEN_HEIGHT - 50))
 
-        hint2 = self.font_small.render("ESC para voltar", True, COLORS["gray"])
+        hint2 = self.font_small.render("ESC to return", True, COLORS["gray"])
         surface.blit(hint2, (SCREEN_WIDTH // 2 - hint2.get_width() // 2, SCREEN_HEIGHT - 25))
 
     def draw_pause_menu(self, surface):
@@ -416,10 +416,10 @@ class MenuSystem:
         overlay.fill((0, 0, 0, 180))
         surface.blit(overlay, (0, 0))
 
-        title = self.font_large.render("PAUSA", True, COLORS["white"])
+        title = self.font_large.render("Pause", True, COLORS["white"])
         surface.blit(title, (SCREEN_WIDTH // 2 - title.get_width() // 2, 150))
 
-        options = ["Continuar", "Reiniciar", "Menu Principal"]
+        options = ["Continue", "Restart", "Return To Menu"]
         for i, opt in enumerate(options):
             y = 250 + i * 50
             color = COLORS["yellow"] if i == self.selected_option else COLORS["white"]
@@ -429,7 +429,7 @@ class MenuSystem:
 
     def draw_loading(self, surface, chapter_name, progress=0):
         surface.fill((5, 5, 15))
-        title = self.font_large.render("CARREGANDO...", True, COLORS["white"])
+        title = self.font_large.render("Loading...", True, COLORS["white"])
         surface.blit(title, (SCREEN_WIDTH // 2 - title.get_width() // 2, SCREEN_HEIGHT // 2 - 50))
 
         name = self.font_medium.render(chapter_name, True, COLORS["cyan"])
@@ -447,17 +447,17 @@ class MenuSystem:
         overlay.fill((80, 0, 0, 200))
         surface.blit(overlay, (0, 0))
 
-        title = self.font_large.render("GAME OVER", True, COLORS["red"])
+        title = self.font_large.render("You are Dead.", True, COLORS["red"])
         surface.blit(title, (SCREEN_WIDTH // 2 - title.get_width() // 2, 150))
 
-        score_txt = self.font_medium.render(f"Score Final: {score}", True, COLORS["yellow"])
+        score_txt = self.font_medium.render(f"Final Score: {score}", True, COLORS["yellow"])
         surface.blit(score_txt, (SCREEN_WIDTH // 2 - score_txt.get_width() // 2, 230))
 
-        chapter_txt = self.font_medium.render(f"Capitulo: {chapter}", True, COLORS["white"])
+        chapter_txt = self.font_medium.render(f"Chapter: {chapter}", True, COLORS["white"])
         surface.blit(chapter_txt, (SCREEN_WIDTH // 2 - chapter_txt.get_width() // 2, 270))
 
         countdown = max(1, timer_secs)
-        hint = self.font_medium.render(f"Voltando ao menu em {countdown}s...", True, COLORS["gray"])
+        hint = self.font_medium.render(f"Returning to menu in {countdown}s...", True, COLORS["gray"])
         surface.blit(hint, (SCREEN_WIDTH // 2 - hint.get_width() // 2, 340))
 
     def draw_victory(self, surface, score):
@@ -465,16 +465,16 @@ class MenuSystem:
         overlay.fill((0, 50, 0, 200))
         surface.blit(overlay, (0, 0))
 
-        title = self.font_large.render("VITORIA!", True, COLORS["green"])
+        title = self.font_large.render("End of campaign.", True, COLORS["green"])
         surface.blit(title, (SCREEN_WIDTH // 2 - title.get_width() // 2, 150))
 
-        subtitle = self.font_medium.render("Voce sobreviveu a Left 4 Doido!", True, COLORS["white"])
+        subtitle = self.font_medium.render("The survivors have escaped!", True, COLORS["white"])
         surface.blit(subtitle, (SCREEN_WIDTH // 2 - subtitle.get_width() // 2, 210))
 
-        score_txt = self.font_large.render(f"Score Final: {score}", True, COLORS["yellow"])
+        score_txt = self.font_large.render(f"Final Score: {score}", True, COLORS["yellow"])
         surface.blit(score_txt, (SCREEN_WIDTH // 2 - score_txt.get_width() // 2, 270))
 
-        hint = self.font_medium.render("ENTER para menu | R para jogar novamente", True, COLORS["gray"])
+        hint = self.font_medium.render("ENTER to Return to menu | R to Replay", True, COLORS["gray"])
         surface.blit(hint, (SCREEN_WIDTH // 2 - hint.get_width() // 2, 350))
 
     def draw_chapter_intro(self, surface, chapter_data, timer):
@@ -484,7 +484,7 @@ class MenuSystem:
         surface.blit(overlay, (0, 0))
 
         if timer > 20:
-            chapter_num = self.font_medium.render(f"CAPITULO 1", True, COLORS["gray"])
+            chapter_num = self.font_medium.render(f"Chapter 1", True, COLORS["gray"])
             surface.blit(chapter_num, (SCREEN_WIDTH // 2 - chapter_num.get_width() // 2, SCREEN_HEIGHT // 2 - 80))
 
             name = self.font_large.render(chapter_data["name"], True, COLORS["red"])
