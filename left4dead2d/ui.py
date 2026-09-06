@@ -1,4 +1,4 @@
-import pygame-ce
+import pygame
 import math
 import time
 from settings import *
