@@ -1,4 +1,4 @@
-import pygame
+import pygame-ce
 import random
 import math
 from settings import *

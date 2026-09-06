@@ -1,4 +1,4 @@
-import pygame
+import pygame-ce
 import socket
 import json
 import threading
